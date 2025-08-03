@@ -1,69 +1,77 @@
-# React + TypeScript + Vite
+# ThemeSwitcher React App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive React + TypeScript app that allows users to switch between three visually distinct themes. Built with Vite, Tailwind CSS, and React Router.
 
-Currently, two official plugins are available:
+## Project Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project demonstrates how to implement **theme switching** in a React application. Users can choose between **three themes**, which update the entire layout, colors, fonts, and structure.
 
-## Expanding the ESLint configuration
+## 🎯 Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- 🌗 **Three Themes**  
+  - **Theme 1 (Default)**: Light, minimalist layout, sans-serif font  
+  - **Theme 2**: Dark mode with sidebar layout and serif fonts  
+  - **Theme 3**: Colorful card-grid layout with playful "Pacifico" font
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- 🎛️ **Theme Switcher**
+  - Dropdown in the fixed header
+  - Persists using `localStorage`
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- 🧠 **State Management**
+  - Using **Context API** for managing global theme state
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- 🌐 **Routing**
+  - Multi-page setup using **React Router v6+**
+  - Pages: Home, About, Contact
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- 📱 **Responsive Design**
+  - Layout adapts to both desktop and mobile
+  - Built using **Tailwind CSS**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- 🔐 **Security**
+  - Basic React best practices for safe rendering
+  - Avoids unnecessary external libraries
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- ⚙️ **Tech Stack**
+  - React + Vite
+  - TypeScript
+  - Tailwind CSS
+  - React Router
+  - Context API
+  - Local Storage
+
+---
+
+## 🧩 Folder Structure
+src/
+│
+├── assets/ # Static files like images
+├── components/ # Reusable UI components
+├── context/ # Theme context provider
+├── hooks/ # Custom React hooks
+├── pages/ # Route-level components (Home, About, Contact)
+├── router/ # React Router configuration
+├── styles/ # theme.css, base.css, utilities.css (imported in index.css)
+├── types/ # TypeScript interfaces/types
+├── utils/ # Utility functions
+│
+├── App.tsx # Main App component
+├── main.tsx # React entry point
+├── index.css # Global styles + Tailwind + theme imports
+
+
+## 🛠️ Setup Instructions
+
+```bash
+# Clone the repo
+git clone https://github.com/shariqhasan29/themeSwitcher.git
+
+# Navigate to project
+cd themeSwitcher
+
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm dev
+
