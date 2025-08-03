@@ -1,6 +1,10 @@
 import { useState, useCallback } from "react";
-import type { UseLocalStorageReturn } from "../types";
 
+interface UseLocalStorageReturn<T> {
+  value: T;
+  setValue: (value: T) => void;
+  removeValue: () => void;
+}
 export function useLocalStorage<T>(
   key: string,
   initialValue: T
