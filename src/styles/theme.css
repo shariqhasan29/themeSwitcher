@@ -1,0 +1,141 @@
+:root {
+  /* Theme 1 - Minimalist Light */
+  --theme1-primary: #ffffff;
+  --theme1-secondary: #f8fafc;
+  --theme1-accent: #3b82f6;
+  --theme1-text-primary: #1f2937;
+  --theme1-text-secondary: #6b7280;
+  --theme1-border: #e5e7eb;
+  --theme1-shadow: rgba(0, 0, 0, 0.1);
+  --theme1-font-primary: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --theme1-font-secondary: inherit;
+
+  /* Theme 2 - Dark Professional */
+  --theme2-primary: #0f172a;
+  --theme2-secondary: #1e293b;
+  --theme2-accent: #f59e0b;
+  --theme2-text-primary: #f1f5f9;
+  --theme2-text-secondary: #94a3b8;
+  --theme2-border: #334155;
+  --theme2-shadow: rgba(0, 0, 0, 0.3);
+  --theme2-font-primary: "Playfair Display", Georgia, serif;
+  --theme2-font-secondary: "Inter", sans-serif;
+
+  /* Theme 3 - Colorful Playful */
+  --theme3-primary: #fef3c7;
+  --theme3-secondary: #ecfdf5;
+  --theme3-accent: #ec4899;
+  --theme3-text-primary: #374151;
+  --theme3-text-secondary: #6b7280;
+  --theme3-border: #fbbf24;
+  --theme3-shadow: rgba(236, 72, 153, 0.2);
+  --theme3-font-primary: "Pacifico", cursive;
+  --theme3-font-secondary: "Comic Neue", cursive;
+}
+
+/* Theme 1 - Minimalist Light Application */
+[data-theme="theme1"] {
+  /* Apply theme variables */
+  --bg-primary: var(--theme1-primary);
+  --bg-secondary: var(--theme1-secondary);
+  --color-accent: var(--theme1-accent);
+  --text-primary: var(--theme1-text-primary);
+  --text-secondary: var(--theme1-text-secondary);
+  --border-color: var(--theme1-border);
+  --shadow-color: var(--theme1-shadow);
+  --font-primary: var(--theme1-font-primary);
+  --font-secondary: var(--theme1-font-secondary);
+
+  /* Layout variables */
+  --header-height: 4rem;
+  --sidebar-width: 10rem;
+  --container-max-width: 1200px;
+  --spacing-unit: 1rem;
+  --border-radius: 0.5rem;
+  --transition-speed: 0.3s;
+
+  /* Layout type variables */
+  --layout-type: "minimal";
+  --sidebar-width: 0;
+  --content-padding: 2rem;
+  --grid-columns: 1;
+}
+
+/* Theme 2 - Dark Professional Application */
+[data-theme="theme2"] {
+  /* Apply theme variables */
+  --bg-primary: var(--theme2-primary);
+  --bg-secondary: var(--theme2-secondary);
+  --color-accent: var(--theme2-accent);
+  --text-primary: var(--theme2-text-primary);
+  --text-secondary: var(--theme2-text-secondary);
+  --border-color: var(--theme2-border);
+  --shadow-color: var(--theme2-shadow);
+  --font-primary: var(--theme2-font-primary);
+  --font-secondary: var(--theme2-font-secondary);
+
+  /* Layout variables */
+  --header-height: 5rem;
+  --sidebar-width: 12rem;
+  --container-max-width: 1400px;
+  --spacing-unit: 1.5rem;
+  --border-radius: 0.75rem;
+  --transition-speed: 0.4s;
+
+  /* Layout type variables */
+  --layout-type: "sidebar";
+  --sidebar-width: 16rem;
+  --content-padding: 3rem;
+  --grid-columns: 2;
+}
+
+/* Theme 3 - Colorful Playful Application */
+[data-theme="theme3"] {
+  /* Apply theme variables */
+  --bg-primary: var(--theme3-primary);
+  --bg-secondary: var(--theme3-secondary);
+  --color-accent: var(--theme3-accent);
+  --text-primary: var(--theme3-text-primary);
+  --text-secondary: var(--theme3-text-secondary);
+  --border-color: var(--theme3-border);
+  --shadow-color: var(--theme3-shadow);
+  --font-primary: var(--theme3-font-primary);
+  --font-secondary: var(--theme3-font-secondary);
+
+  /* Layout variables */
+  --header-height: 4.5rem;
+  --sidebar-width: 18rem;
+  --container-max-width: 1100px;
+  --spacing-unit: 1.25rem;
+  --border-radius: 1rem;
+  --transition-speed: 0.5s;
+
+  /* Layout type variables */
+  --layout-type: "grid";
+  --sidebar-width: 0;
+  --content-padding: 2.5rem;
+  --grid-columns: 3;
+}
+
+/* Global theme transition classes */
+.theme-transition {
+  transition: background-color var(--transition-speed) ease-in-out,
+    color var(--transition-speed) ease-in-out,
+    border-color var(--transition-speed) ease-in-out,
+    box-shadow var(--transition-speed) ease-in-out,
+    transform var(--transition-speed) ease-in-out;
+}
+
+/* Theme-specific transition timing */
+[data-theme="theme1"] .theme-transition {
+  transition-timing-function: ease-out;
+}
+
+[data-theme="theme2"] .theme-transition {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="theme3"] .theme-transition {
+  transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}

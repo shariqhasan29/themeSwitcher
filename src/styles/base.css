@@ -1,0 +1,48 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Reset structural elements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol,
+li,
+figure,
+blockquote {
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Apply theme styles to body */
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed) ease,
+    color var(--transition-speed) ease;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Ensure app root gets theme background */
+#root {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  transition: background-color var(--transition-speed) ease;
+}
