@@ -1,23 +1,39 @@
 .bg-primary {
   background-color: var(--bg-primary);
 }
+
 .bg-secondary {
   background-color: var(--bg-secondary);
 }
+
 .bg-accent {
   background-color: var(--color-accent);
 }
+
 .text-primary {
   color: var(--text-primary);
 }
+
 .text-secondary {
   color: var(--text-secondary);
 }
+
 .text-accent {
   color: var(--color-accent);
 }
+
 .border-primary {
   border-color: var(--border-color);
+}
+
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  transition: color var(--transition-speed) ease;
+}
+
+.nav-link:hover {
+  color: var(--color-accent) !important;
 }
 
 .main-container {

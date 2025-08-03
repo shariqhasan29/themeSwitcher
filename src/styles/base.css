@@ -42,7 +42,7 @@ body {
 
 /* Ensure app root gets theme background */
 #root {
-  min-height: 100vh;
+  min-height: 100vh; /* FIXED: was 1ils00tvh */
   background-color: var(--bg-primary);
   transition: background-color var(--transition-speed) ease;
 }
