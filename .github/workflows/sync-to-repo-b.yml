@@ -10,64 +10,63 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout Repo A (with full history)
       - name: Checkout Repo A
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Step 2: Set up Git user
       - name: Set up Git
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      # Step 3: Debug - Show token prefix (safe, no leak)
-      - name: Debug - Check Token Presence
+      # DEBUG 1: Show if secret is loaded
+      - name: Debug - Print Token Info
         env:
           REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
         run: |
           if [ -z "$REPO_B_TOKEN" ]; then
-            echo "ERROR: REPO_B_TOKEN is empty or not set!"
+            echo "ERROR: REPO_B_TOKEN is EMPTY or NOT SET!"
             exit 1
           else
-            echo "Token is set (length: ${#REPO_B_TOKEN} chars)"
-            echo "Token starts with: ${REPO_B_TOKEN:0:8}..."
+            echo "Token length: ${#REPO_B_TOKEN}"
+            echo "Token preview: ${REPO_B_TOKEN:0:8}..."
           fi
 
-      # Step 4: Debug - List remotes (should be empty at first)
-      - name: Debug - List current remotes
-        run: |
-          echo "Current remotes:"
-          git remote -v || echo "No remotes yet"
-
-      # Step 5: Add remote for Repo B using correct PAT format
-      - name: Add Repo B Remote
+      # DEBUG 2: Add remote with full URL echo
+      - name: Add Repo B Remote (with debug)
         env:
           REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
         run: |
-          git remote add repo-b https://x-access-token:${REPO_B_TOKEN}@github.com/shariqhasan29/repo-b.git || \
-          git remote set-url repo-b https://x-access-token:${REPO_B_TOKEN}@github.com/shariqhasan29/repo-b.git
+          echo "Adding remote with URL:"
+          echo "https://x-access-token:***@github.com/shariqhasan29/repo-b.git"
+          
+          git remote add repo-b "https://x-access-token:${REPO_B_TOKEN}@github.com/shariqhasan29/repo-b.git" || \
+          git remote set-url repo-b "https://x-access-token:${REPO_B_TOKEN}@github.com/shariqhasan29/repo-b.git"
 
-      # Step 6: Debug - Verify remote was added
-      - name: Debug - Verify remote URL
+          echo "Remote added. Verifying..."
+          git remote -v
+
+      # DEBUG 3: Test remote URL explicitly
+      - name: Test Remote URL
         run: |
-          echo "Remote 'repo-b' URL:"
+          echo "Final remote URL:"
           git remote get-url repo-b
 
-      # Step 7: Optional - Fetch sync branch to check if it exists
-      - name: Fetch sync branch from Repo B
+      # DEBUG 4: Try a dry-run push to see auth
+      - name: Dry-run push (test auth)
+        env:
+          REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
         run: |
-          git fetch repo-b sync || echo "Warning: Could not fetch 'sync' branch (might not exist yet)"
+          echo "Testing authentication with dry-run..."
+          git push repo-b main:sync --dry-run
 
-      # Step 8: Push main → sync branch (force to mirror exactly)
+      # FINAL: Real push
       - name: Push to Repo B (main → sync)
         env:
           REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
         run: |
           git push repo-b main:sync --force
 
-      # Step 9: Final success message
       - name: Success
-        run: |
-          echo "Successfully synced Repo A (main) → Repo B (sync)"
+        run: echo "Sync completed successfully!"
