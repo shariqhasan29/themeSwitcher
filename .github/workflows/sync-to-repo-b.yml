@@ -3,27 +3,27 @@ name: Sync to Repo B
 on:
   push:
     branches:
-      - main   # When you push to Repo A's main branch
+      - main
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repo A
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Configure Git
+      - name: Set up Git
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Add Repo B as remote
+        run: |
+          git remote add repo-b https://x-access-token:${{ secrets.REPO_B_TOKEN }}@github.com/shariqhasan29/repo-b.git
+          git fetch repo-b sync
 
       - name: Push changes to Repo B (sync branch)
-        env:
-          REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
         run: |
-          # Add Repo B as remote
-          git remote add repo-b https://x-access-token:${REPO_B_TOKEN}@github.com/shariqhasan29/repo-b.git
-
-          # Push current main branch of Repo A to sync branch of Repo B
           git push repo-b main:sync --force
