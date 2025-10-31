@@ -10,63 +10,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo A
+      - name: Checkout Repo A (without token injection)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # DO NOT set token here → avoids GITHUB_TOKEN injection
 
-      - name: Set up Git
+      # CRITICAL: Disable Git credential helper to prevent GITHUB_TOKEN override
+      - name: Disable Git Credential Helper
+        run: |
+          git config --global --unset credential.helper || true
+          git config --global credential.helper ""
+
+      - name: Set Git Identity
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      # DEBUG 1: Show if secret is loaded
-      - name: Debug - Print Token Info
+      # DEBUG: Confirm PAT is loaded
+      - name: Debug PAT
         env:
-          REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
+          TOKEN: ${{ secrets.REPO_B_TOKEN }}
         run: |
-          if [ -z "$REPO_B_TOKEN" ]; then
-            echo "ERROR: REPO_B_TOKEN is EMPTY or NOT SET!"
+          echo "PAT length: ${#TOKEN}"
+          echo "PAT preview: ${TOKEN:0:8}..."
+          if [ ${#TOKEN} -lt 35 ]; then
+            echo "ERROR: PAT too short!"
             exit 1
-          else
-            echo "Token length: ${#REPO_B_TOKEN}"
-            echo "Token preview: ${REPO_B_TOKEN:0:8}..."
           fi
 
-      # DEBUG 2: Add remote with full URL echo
-      - name: Add Repo B Remote (with debug)
-        env:
-          REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
-        run: |
-          echo "Adding remote with URL:"
-          echo "https://x-access-token:***@github.com/shariqhasan29/repo-b.git"
-          
-          git remote add repo-b "https://x-access-token:${REPO_B_TOKEN}@github.com/shariqhasan29/repo-b.git" || \
-          git remote set-url repo-b "https://x-access-token:${REPO_B_TOKEN}@github.com/shariqhasan29/repo-b.git"
-
-          echo "Remote added. Verifying..."
-          git remote -v
-
-      # DEBUG 3: Test remote URL explicitly
-      - name: Test Remote URL
-        run: |
-          echo "Final remote URL:"
-          git remote get-url repo-b
-
-      # DEBUG 4: Try a dry-run push to see auth
-      - name: Dry-run push (test auth)
-        env:
-          REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
-        run: |
-          echo "Testing authentication with dry-run..."
-          git push repo-b main:sync --dry-run
-
-      # FINAL: Real push
+      # FINAL PUSH: Use direct HTTPS URL with PAT (bypasses remote + credential helper)
       - name: Push to Repo B (main → sync)
         env:
-          REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
+          TOKEN: ${{ secrets.REPO_B_TOKEN }}
         run: |
-          git push repo-b main:sync --force
+          git push https://x-access-token:$TOKEN@github.com/shariqhasan29/repo-b.git \
+            refs/remotes/origin/main:refs/heads/sync --force
 
       - name: Success
-        run: echo "Sync completed successfully!"
+        run: echo "Synced Repo A (main) → Repo B (sync)"
