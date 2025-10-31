@@ -14,11 +14,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Install SSH key with correct permissions
       - name: Install SSH Key
+        env:
+          SSH_KEY: ${{ secrets.REPO_B_SSH_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "$REPO_B_SSH_KEY" > ~/.ssh/repo_b_key
+          echo "$SSH_KEY" > ~/.ssh/repo_b_key
           chmod 600 ~/.ssh/repo_b_key
+          # Fix line endings and validate key
+          sed -i 's/\r$//' ~/.ssh/repo_b_key
+          ssh-keygen -y -P "" -f ~/.ssh/repo_b_key > /dev/null 2>&1 || exit 1
           ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
 
       - name: Set Git Identity
@@ -27,12 +33,10 @@ jobs:
           git config --global user.name "github-actions[bot]"
 
       - name: Push to Repo B via SSH
-        env:
-          REPO_B_SSH_KEY: ${{ secrets.REPO_B_SSH_KEY }}
         run: |
           export GIT_SSH_COMMAND="ssh -i ~/.ssh/repo_b_key -o StrictHostKeyChecking=no"
-          git remote add repo-b git@github.com:shariqhasan29/repo-b.git
+          git remote add repo-b git@github.com:shariqhasan29/repo-b.git || true
           git push repo-b main:sync --force
 
       - name: Success
-        run: echo "Successfully synced Repo A (main) → Repo B (sync) via SSH!"
+        run: echo "Successfully synced via SSH!"
