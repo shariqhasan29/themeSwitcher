@@ -10,19 +10,64 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout Repo A (with full history)
       - name: Checkout Repo A
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # Step 2: Set up Git user
       - name: Set up Git
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      - name: Push to Repo B
+      # Step 3: Debug - Show token prefix (safe, no leak)
+      - name: Debug - Check Token Presence
         env:
           REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
         run: |
-          git remote add repo-b https://${REPO_B_TOKEN}@github.com/shariqhasan29/repo-b.git
+          if [ -z "$REPO_B_TOKEN" ]; then
+            echo "ERROR: REPO_B_TOKEN is empty or not set!"
+            exit 1
+          else
+            echo "Token is set (length: ${#REPO_B_TOKEN} chars)"
+            echo "Token starts with: ${REPO_B_TOKEN:0:8}..."
+          fi
+
+      # Step 4: Debug - List remotes (should be empty at first)
+      - name: Debug - List current remotes
+        run: |
+          echo "Current remotes:"
+          git remote -v || echo "No remotes yet"
+
+      # Step 5: Add remote for Repo B using correct PAT format
+      - name: Add Repo B Remote
+        env:
+          REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
+        run: |
+          git remote add repo-b https://x-access-token:${REPO_B_TOKEN}@github.com/shariqhasan29/repo-b.git || \
+          git remote set-url repo-b https://x-access-token:${REPO_B_TOKEN}@github.com/shariqhasan29/repo-b.git
+
+      # Step 6: Debug - Verify remote was added
+      - name: Debug - Verify remote URL
+        run: |
+          echo "Remote 'repo-b' URL:"
+          git remote get-url repo-b
+
+      # Step 7: Optional - Fetch sync branch to check if it exists
+      - name: Fetch sync branch from Repo B
+        run: |
+          git fetch repo-b sync || echo "Warning: Could not fetch 'sync' branch (might not exist yet)"
+
+      # Step 8: Push main → sync branch (force to mirror exactly)
+      - name: Push to Repo B (main → sync)
+        env:
+          REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
+        run: |
           git push repo-b main:sync --force
+
+      # Step 9: Final success message
+      - name: Success
+        run: |
+          echo "Successfully synced Repo A (main) → Repo B (sync)"
