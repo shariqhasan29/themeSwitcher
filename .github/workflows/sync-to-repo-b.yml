@@ -8,44 +8,31 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repo A (without token injection)
+      - name: Checkout Repo A
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # DO NOT set token here → avoids GITHUB_TOKEN injection
 
-      # CRITICAL: Disable Git credential helper to prevent GITHUB_TOKEN override
-      - name: Disable Git Credential Helper
+      - name: Install SSH Key
         run: |
-          git config --global --unset credential.helper || true
-          git config --global credential.helper ""
+          mkdir -p ~/.ssh
+          echo "$REPO_B_SSH_KEY" > ~/.ssh/repo_b_key
+          chmod 600 ~/.ssh/repo_b_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
 
       - name: Set Git Identity
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
 
-      # DEBUG: Confirm PAT is loaded
-      - name: Debug PAT
+      - name: Push to Repo B via SSH
         env:
-          TOKEN: ${{ secrets.REPO_B_TOKEN }}
+          REPO_B_SSH_KEY: ${{ secrets.REPO_B_SSH_KEY }}
         run: |
-          echo "PAT length: ${#TOKEN}"
-          echo "PAT preview: ${TOKEN:0:8}..."
-          if [ ${#TOKEN} -lt 35 ]; then
-            echo "ERROR: PAT too short!"
-            exit 1
-          fi
-
-      # FINAL PUSH: Use direct HTTPS URL with PAT (bypasses remote + credential helper)
-      - name: Push to Repo B (main → sync)
-        env:
-          TOKEN: ${{ secrets.REPO_B_TOKEN }}
-        run: |
-          git push https://x-access-token:$TOKEN@github.com/shariqhasan29/repo-b.git \
-            refs/remotes/origin/main:refs/heads/sync --force
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/repo_b_key -o StrictHostKeyChecking=no"
+          git remote add repo-b git@github.com:shariqhasan29/repo-b.git
+          git push repo-b main:sync --force
 
       - name: Success
-        run: echo "Synced Repo A (main) → Repo B (sync)"
+        run: echo "Successfully synced Repo A (main) → Repo B (sync) via SSH!"
